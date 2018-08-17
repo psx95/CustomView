@@ -51,6 +51,18 @@ public class DialView extends View {
         dialPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         dialPaint.setColor(Color.GRAY);
         activeSelection = 0;
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activeSelection = (activeSelection + 1) % SELECTION_COUNT;
+                if (activeSelection >= 1) {
+                    dialPaint.setColor(Color.GREEN);
+                } else {
+                    dialPaint.setColor(Color.GRAY);
+                }
+                invalidate();
+            }
+        });
     }
 
     @Override
