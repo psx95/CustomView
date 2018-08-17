@@ -1,6 +1,7 @@
 package com.psx.customview;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,6 +22,8 @@ public class DialView extends View {
     private int activeSelection; // The active selection
     private final StringBuffer tempLabel = new StringBuffer(8);
     private final float[] tempResult = new float[2];
+    private static int fanOnColor = Color.CYAN;
+    private static int fanOffColor = Color.GRAY;
 
     public DialView(Context context) {
         super(context);
@@ -29,17 +32,17 @@ public class DialView extends View {
 
     public DialView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(attrs);
     }
 
     public DialView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(attrs);
     }
 
     public DialView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        init(attrs);
     }
 
     private void init() {
@@ -56,13 +59,23 @@ public class DialView extends View {
             public void onClick(View v) {
                 activeSelection = (activeSelection + 1) % SELECTION_COUNT;
                 if (activeSelection >= 1) {
-                    dialPaint.setColor(Color.GREEN);
+                    dialPaint.setColor(fanOnColor);
                 } else {
-                    dialPaint.setColor(Color.GRAY);
+                    dialPaint.setColor(fanOffColor);
                 }
                 invalidate();
             }
         });
+    }
+
+    private void init(AttributeSet attrs) {
+        if (attrs != null) {
+            TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.DialView, 0, 0);                //	Set	the	fan	on	and	fan	off	colors	from	the	attribute	values.
+            fanOnColor = typedArray.getColor(R.styleable.DialView_fanOnColor, fanOnColor);
+            fanOffColor = typedArray.getColor(R.styleable.DialView_fanOffColor, fanOffColor);
+            typedArray.recycle();
+        }
+        init();
     }
 
     @Override
