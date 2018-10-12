@@ -1,5 +1,6 @@
 package com.psx.customview;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -12,6 +13,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 public class FuelGauge extends View {
 
@@ -35,6 +37,7 @@ public class FuelGauge extends View {
     private Paint defaultPaint;
     private Paint textPaint, smallTextPaint;
     private RectF oval;
+    private float defaultSweepAngle = 0, transportSweepAngle = 0, workSweepAngle = 0;
     private static final String TAG = FuelGauge.class.getSimpleName();
 
     public FuelGauge(Context context) {
@@ -122,6 +125,7 @@ public class FuelGauge extends View {
             typedArray.recycle();
         }
         init();
+        animateArcDraw();
     }
 
     private float calculateArcFillPercentage() {
@@ -136,10 +140,12 @@ public class FuelGauge extends View {
         height = h;
         float center_x = width / 2;
         float center_y = height / 2;
+        Log.d(TAG, "Center x,y " + center_x + ", " + center_y);
         oval = new RectF();
         arcRadius = ((Math.min(width, height) / 2) * 0.8);
         float a = (float) arcRadius;
         oval.set(center_x - a, center_y - a, center_x + a, center_y + a);
+        Log.d(TAG, "Oval " + (center_x - a) + ", " + (center_y - a) + ", " + (center_x + a) + ", " + (center_y + a));
     }
 
     @Override
@@ -150,16 +156,73 @@ public class FuelGauge extends View {
         canvas.drawText("LITRES", width / 2, height / 2 + convertDpToPx(VERTICAL_SAPCE_BETWEEN_TEXTS), smallTextPaint);
         if (WORK_FUEL == 0 && TRANSPORT_FUEL == 0) {
             setupDefaultPaint();
-            canvas.drawArc(oval, 160, 220, USE_CENTER, defaultPaint);
+            canvas.drawArc(oval, 160, defaultSweepAngle, USE_CENTER, defaultPaint);
         } else {
-            canvas.drawArc(oval, 160, 220, USE_CENTER, transportPaint);
-            canvas.drawArc(oval, 160, 220 * calculateArcFillPercentage(), USE_CENTER, workPaint);
+            canvas.drawArc(oval, 160, transportSweepAngle, USE_CENTER, transportPaint);
+            canvas.drawArc(oval, 160, workSweepAngle, USE_CENTER, workPaint);
         }
     }
 
     private int convertDpToPx(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 dp, getResources().getDisplayMetrics());
+    }
+
+    private void animateArcDraw() {
+        if (TRANSPORT_FUEL == 0 && WORK_FUEL == 0) {
+            createDefaultAnimator().start();
+        } else {
+            createWorkAnimator(220 * calculateArcFillPercentage()).start();
+            createTransportAnimator().start();
+        }
+    }
+
+    private ValueAnimator createDefaultAnimator() {
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 220);
+        valueAnimator.setDuration(2000);
+        valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                defaultSweepAngle = (float) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+
+        return valueAnimator;
+    }
+
+    private ValueAnimator createWorkAnimator(float sweepAngle) {
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, sweepAngle);
+        valueAnimator.setDuration(2000);
+        valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                workSweepAngle = (float) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+
+        return valueAnimator;
+    }
+
+    private ValueAnimator createTransportAnimator() {
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 220);
+        valueAnimator.setDuration(2000);
+        valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                transportSweepAngle = (float) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+
+        return valueAnimator;
     }
 }
 
