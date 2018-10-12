@@ -29,6 +29,7 @@ public class FuelGauge extends View {
     private float TRANSPORT_FUEL = 0;
     private float WORK_FUEL = 0;
     private boolean USE_CENTER = true;
+    private boolean LOAD_IMMIDIATELY = true;
     private String SMALL_TEXT = "LITRES";
     private String MAIN_TEXT = "11";
     private float width;
@@ -123,6 +124,7 @@ public class FuelGauge extends View {
             SMALL_TEXT = typedArray.getString(R.styleable.FuelGauge_smallText);
             MAIN_TEXT = typedArray.getString(R.styleable.FuelGauge_mainText);
             DEFAULT_COLOR = typedArray.getColor(R.styleable.FuelGauge_default_color, Color.BLACK);
+            LOAD_IMMIDIATELY = typedArray.getBoolean(R.styleable.FuelGauge_loadImmediately, true);
             typedArray.recycle();
         }
         if (SMALL_TEXT == null || SMALL_TEXT.equals("")) {
@@ -134,7 +136,8 @@ public class FuelGauge extends View {
             Log.e(TAG, "EMPTY MAIN_TEXT Field. Please provide a value for mainText");
         }
         init();
-        animateArcDraw();
+        if (LOAD_IMMIDIATELY)
+            animateArcDraw();
     }
 
     private float calculateArcFillPercentage() {
@@ -229,6 +232,26 @@ public class FuelGauge extends View {
         });
 
         return valueAnimator;
+    }
+
+    public void setWorkFuel(float workFuel) {
+        WORK_FUEL = workFuel;
+    }
+
+    public void setTransportFuel(float transportFuel) {
+        TRANSPORT_FUEL = transportFuel;
+    }
+
+    public void setSmallText(String smallText) {
+        SMALL_TEXT = smallText;
+    }
+
+    public void setMainText(String mainText) {
+        MAIN_TEXT = mainText;
+    }
+
+    public void startMagic() {
+        animateArcDraw();
     }
 }
 

@@ -33,16 +33,24 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.psx.customview.FuelGauge
+        android:id="@+id/fuel_gauge"
         android:layout_width="250dp"
         android:layout_height="250dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/customViewLabel"
+        app:loadImmediately="false"
         app:smallTextSize="12"
         app:textSize="50"
         app:transport_fuel="70"
         app:useCenter="false"
         app:verticalSpaceBetweenTexts="10"
         app:work_fuel="50" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="startMagic"
+        android:text="Start Animation" />
 
 </android.support.constraint.ConstraintLayout>
