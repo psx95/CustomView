@@ -17,11 +17,13 @@ public class FuelGauge extends View {
 
     private int TRANSPORT_COLOR = Color.BLUE;
     private int WORK_COLOR = Color.GREEN;
+    private int DEFAULT_COLOR = Color.BLACK;
     private int TEXT_COLOR = Color.DKGRAY;
     private int SMALL_TEXT_COLOR = Color.LTGRAY;
     private int TEXT_SIZE = 40;
     private int SMALL_TEXT_SIZE = 10;
     private int VERTICAL_SAPCE_BETWEEN_TEXTS = 11;
+    private float STROKE_WIDTH = 70f;
     private float TRANSPORT_FUEL = 0;
     private float WORK_FUEL = 0;
     private boolean USE_CENTER = true;
@@ -30,6 +32,7 @@ public class FuelGauge extends View {
     private double arcRadius;
     private Paint transportPaint;
     private Paint workPaint;
+    private Paint defaultPaint;
     private Paint textPaint, smallTextPaint;
     private RectF oval;
     private static final String TAG = FuelGauge.class.getSimpleName();
@@ -56,6 +59,15 @@ public class FuelGauge extends View {
         setupSmallTextPaint();
     }
 
+    private void setupDefaultPaint() {
+        defaultPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        defaultPaint.setColor(DEFAULT_COLOR);
+        defaultPaint.setShader(null);
+        defaultPaint.setStrokeWidth(STROKE_WIDTH);
+        defaultPaint.setStyle(Paint.Style.STROKE);
+        defaultPaint.setStrokeCap(Paint.Cap.ROUND);
+    }
+
     private void setupSmallTextPaint() {
         smallTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         smallTextPaint.setColor(SMALL_TEXT_COLOR);
@@ -76,7 +88,7 @@ public class FuelGauge extends View {
         transportPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         transportPaint.setColor(TRANSPORT_COLOR);
         transportPaint.setShader(null);
-        transportPaint.setStrokeWidth(70);
+        transportPaint.setStrokeWidth(STROKE_WIDTH);
         transportPaint.setStyle(Paint.Style.STROKE);
         transportPaint.setStrokeCap(Paint.Cap.ROUND);
     }
@@ -85,7 +97,7 @@ public class FuelGauge extends View {
         workPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         workPaint.setColor(WORK_COLOR);
         workPaint.setShader(null);
-        workPaint.setStrokeWidth(70);
+        workPaint.setStrokeWidth(STROKE_WIDTH);
         workPaint.setStyle(Paint.Style.STROKE);
         workPaint.setStrokeCap(Paint.Cap.ROUND);
     }
@@ -106,9 +118,15 @@ public class FuelGauge extends View {
             SMALL_TEXT_COLOR = typedArray.getColor(R.styleable.FuelGauge_smallTextColor, Color.LTGRAY);
             VERTICAL_SAPCE_BETWEEN_TEXTS = typedArray.getInteger(R.styleable.FuelGauge_verticalSpaceBetweenTexts, 11);
             VERTICAL_SAPCE_BETWEEN_TEXTS = convertDpToPx(VERTICAL_SAPCE_BETWEEN_TEXTS);
+            STROKE_WIDTH = typedArray.getFloat(R.styleable.FuelGauge_strokeWidth, 70f);
             typedArray.recycle();
         }
         init();
+    }
+
+    private float calculateArcFillPercentage() {
+        float totalConsumption = WORK_FUEL + TRANSPORT_FUEL;
+        return WORK_FUEL / totalConsumption;
     }
 
     @Override
@@ -130,8 +148,13 @@ public class FuelGauge extends View {
         Log.d(TAG, "OnDraw Called");
         canvas.drawText("11", width / 2, height / 2, textPaint);
         canvas.drawText("LITRES", width / 2, height / 2 + convertDpToPx(VERTICAL_SAPCE_BETWEEN_TEXTS), smallTextPaint);
-        canvas.drawArc(oval, 160, 220, USE_CENTER, transportPaint);
-        canvas.drawArc(oval, 160, 110, USE_CENTER, workPaint);
+        if (WORK_FUEL == 0 && TRANSPORT_FUEL == 0) {
+            setupDefaultPaint();
+            canvas.drawArc(oval, 160, 220, USE_CENTER, defaultPaint);
+        } else {
+            canvas.drawArc(oval, 160, 220, USE_CENTER, transportPaint);
+            canvas.drawArc(oval, 160, 220 * calculateArcFillPercentage(), USE_CENTER, workPaint);
+        }
     }
 
     private int convertDpToPx(int dp) {

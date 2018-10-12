@@ -41,6 +41,8 @@
         app:useCenter="false"
         app:smallTextSize="12"
         app:textSize="50"
+        app:work_fuel="70"
+        app:transport_fuel="50"
         app:verticalSpaceBetweenTexts="10" />
 
 </android.support.constraint.ConstraintLayout>
