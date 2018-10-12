@@ -129,7 +129,7 @@ public class FuelGauge extends View {
         super.onDraw(canvas);
         Log.d(TAG, "OnDraw Called");
         canvas.drawText("11", width / 2, height / 2, textPaint);
-        canvas.drawText("LITRES", width / 2, height / 2 + convertDpToPx(11), smallTextPaint);
+        canvas.drawText("LITRES", width / 2, height / 2 + convertDpToPx(VERTICAL_SAPCE_BETWEEN_TEXTS), smallTextPaint);
         canvas.drawArc(oval, 160, 220, USE_CENTER, transportPaint);
         canvas.drawArc(oval, 160, 110, USE_CENTER, workPaint);
     }
