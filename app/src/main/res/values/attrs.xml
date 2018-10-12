@@ -4,4 +4,16 @@
         <attr name="fanOnColor" format="color|reference" />
         <attr name="fanOffColor" format="color|reference" />
     </declare-styleable>
+    <declare-styleable name="FuelGauge">
+        <attr name="transport_color" format="color|reference" />
+        <attr name="work_color" format="color|reference" />
+        <attr name="work_fuel" format="float" />
+        <attr name="transport_fuel" format="float" />
+        <attr name="useCenter" format="boolean" />
+        <attr name="textSize" format="integer" />
+        <attr name="textColor" format="color|reference" />
+        <attr name="smallTextColor" format="color|reference" />
+        <attr name="smallTextSize" format="integer" />
+        <attr name="verticalSpaceBetweenTexts" format="integer" />
+    </declare-styleable>
 </resources>
