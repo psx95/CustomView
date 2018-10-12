@@ -7,6 +7,7 @@
     <declare-styleable name="FuelGauge">
         <attr name="transport_color" format="color|reference" />
         <attr name="work_color" format="color|reference" />
+        <attr name="default_color" format="color|reference" />
         <attr name="work_fuel" format="float" />
         <attr name="transport_fuel" format="float" />
         <attr name="useCenter" format="boolean" />
@@ -16,5 +17,7 @@
         <attr name="smallTextSize" format="integer" />
         <attr name="verticalSpaceBetweenTexts" format="integer" />
         <attr name="strokeWidth" format="float" />
+        <attr name="smallText" format="string" />
+        <attr name="mainText" format="string" />
     </declare-styleable>
 </resources>
